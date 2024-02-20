@@ -67,7 +67,7 @@ CassError insert_value(CassSession* session, CassStatement *statement, const cha
     }
 
     cass_future_free(future);
-    cass_statement_free(statement);
+    // cass_statement_free(statement);
 
     return rc;
 }
