@@ -1,0 +1,160 @@
+$ ./sample
+[0] -------------------------
+[1] -------------------------
+[2] -------------------------
+=================================================================
+==25375==ERROR: AddressSanitizer: heap-use-after-free on address 0x00010740355f at pc 0x000103f113f4 bp 0x00016e35e3e0 sp 0x00016e35e3d8
+READ of size 1 at 0x00010740355f thread T2
+    #0 0x103f113f0 in std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>>::__is_long[abi:v160006]() const+0x78 (libcassandra.2.17.1.dylib:arm64+0x153f0)
+    #1 0x103f0c930 in std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>>::size[abi:v160006]() const+0x18 (libcassandra.2.17.1.dylib:arm64+0x10930)
+    #2 0x103f0db78 in std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>>::empty[abi:v160006]() const+0x14 (libcassandra.2.17.1.dylib:arm64+0x11b78)
+    #3 0x10437d558 in datastax::internal::core::RequestProcessor::execution_profile(std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>> const&) const+0x168 (libcassandra.2.17.1.dylib:arm64+0x481558)
+    #4 0x10437f500 in datastax::internal::core::RequestProcessor::process_requests(unsigned long long)+0x264 (libcassandra.2.17.1.dylib:arm64+0x483500)
+    #5 0x10437ef08 in datastax::internal::core::RequestProcessor::on_timeout(datastax::internal::core::MicroTimer*)+0x348 (libcassandra.2.17.1.dylib:arm64+0x482f08)
+    #6 0x10438a2cc in datastax::internal::Callback<void, datastax::internal::core::MicroTimer*>::MemberInvoker<void (datastax::internal::core::RequestProcessor::*)(datastax::internal::core::MicroTimer*), datastax::internal::core::RequestProcessor>::invoke(datastax::internal::core::MicroTimer* const&) const+0x160 (libcassandra.2.17.1.dylib:arm64+0x48e2cc)
+    #7 0x10430b520 in datastax::internal::Callback<void, datastax::internal::core::MicroTimer*>::operator()(datastax::internal::core::MicroTimer* const&) const+0xdc (libcassandra.2.17.1.dylib:arm64+0x40f520)
+    #8 0x10430b294 in datastax::internal::core::MicroTimer::on_timeout(datastax::internal::core::Timer*)+0x228 (libcassandra.2.17.1.dylib:arm64+0x40f294)
+    #9 0x10430c280 in datastax::internal::Callback<void, datastax::internal::core::Timer*>::MemberInvoker<void (datastax::internal::core::MicroTimer::*)(datastax::internal::core::Timer*), datastax::internal::core::MicroTimer>::invoke(datastax::internal::core::Timer* const&) const+0x160 (libcassandra.2.17.1.dylib:arm64+0x410280)
+    #10 0x10446d634 in datastax::internal::Callback<void, datastax::internal::core::Timer*>::operator()(datastax::internal::core::Timer* const&) const+0xdc (libcassandra.2.17.1.dylib:arm64+0x571634)
+    #11 0x10446d4ac in datastax::internal::core::Timer::handle_timeout()+0x1d4 (libcassandra.2.17.1.dylib:arm64+0x5714ac)
+    #12 0x10446d0e8 in datastax::internal::core::Timer::on_timeout(uv_timer_s*)+0x5c (libcassandra.2.17.1.dylib:arm64+0x5710e8)
+    #13 0x102f477e4 in uv__run_timers+0x94 (libuv.1.dylib:arm64+0x77e4)
+    #14 0x102f4aa54 in uv_run+0x228 (libuv.1.dylib:arm64+0xaa54)
+    #15 0x1041e2394 in datastax::internal::core::EventLoop::handle_run()+0xa8 (libcassandra.2.17.1.dylib:arm64+0x2e6394)
+    #16 0x1041e0d68 in datastax::internal::core::EventLoop::internal_on_run(void*)+0x1c (libcassandra.2.17.1.dylib:arm64+0x2e4d68)
+    #17 0x188d76030 in _pthread_start+0x84 (libsystem_pthread.dylib:arm64e+0x7030)
+    #18 0x188d70e38 in thread_start+0x4 (libsystem_pthread.dylib:arm64e+0x1e38)
+
+0x00010740355f is located 159 bytes inside of 288-byte region [0x0001074034c0,0x0001074035e0)
+freed by thread T2 here:
+    #0 0x10335f380 in wrap_free+0x98 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x53380)
+    #1 0x103f07458 in datastax::internal::Memory::free(void*)+0x78 (libcassandra.2.17.1.dylib:arm64+0xb458)
+    #2 0x103f201d0 in datastax::internal::Allocated::operator delete(void*)+0x14 (libcassandra.2.17.1.dylib:arm64+0x241d0)
+    #3 0x1041f4168 in datastax::internal::core::ExecuteRequest::~ExecuteRequest()+0x20 (libcassandra.2.17.1.dylib:arm64+0x2f8168)
+    #4 0x103f2e2d0 in datastax::internal::RefCounted<datastax::internal::core::Request>::dec_ref() const+0x124 (libcassandra.2.17.1.dylib:arm64+0x322d0)
+    #5 0x103fa1954 in datastax::internal::SharedRefPtr<datastax::internal::core::Request const>::~SharedRefPtr()+0xac (libcassandra.2.17.1.dylib:arm64+0xa5954)
+    #6 0x103fa1584 in datastax::internal::SharedRefPtr<datastax::internal::core::Request const>::~SharedRefPtr()+0x18 (libcassandra.2.17.1.dylib:arm64+0xa5584)
+    #7 0x103fa152c in datastax::internal::core::RequestWrapper::~RequestWrapper()+0x30 (libcassandra.2.17.1.dylib:arm64+0xa552c)
+    #8 0x103fa0fc8 in datastax::internal::core::RequestWrapper::~RequestWrapper()+0x18 (libcassandra.2.17.1.dylib:arm64+0xa4fc8)
+    #9 0x103fa0f68 in datastax::internal::core::RequestCallback::~RequestCallback()+0x78 (libcassandra.2.17.1.dylib:arm64+0xa4f68)
+    #10 0x10436bfb4 in datastax::internal::core::RequestExecution::~RequestExecution()+0x8c (libcassandra.2.17.1.dylib:arm64+0x46ffb4)
+    #11 0x104364acc in datastax::internal::core::RequestExecution::~RequestExecution()+0x18 (libcassandra.2.17.1.dylib:arm64+0x468acc)
+    #12 0x104364af8 in datastax::internal::core::RequestExecution::~RequestExecution()+0x18 (libcassandra.2.17.1.dylib:arm64+0x468af8)
+    #13 0x103fa6fc8 in datastax::internal::RefCounted<datastax::internal::core::RequestCallback>::dec_ref() const+0x124 (libcassandra.2.17.1.dylib:arm64+0xaafc8)
+    #14 0x103fa6e78 in datastax::internal::SharedRefPtr<datastax::internal::core::RequestCallback>::~SharedRefPtr()+0xac (libcassandra.2.17.1.dylib:arm64+0xaae78)
+    #15 0x103f44f68 in datastax::internal::SharedRefPtr<datastax::internal::core::RequestCallback>::~SharedRefPtr()+0x18 (libcassandra.2.17.1.dylib:arm64+0x48f68)
+    #16 0x10405b5d4 in datastax::internal::core::Connection::on_read(char const*, unsigned long)+0xd70 (libcassandra.2.17.1.dylib:arm64+0x15f5d4)
+    #17 0x10405a848 in datastax::internal::core::ConnectionHandler::on_read(datastax::internal::core::Socket*, long, uv_buf_t const*)+0xb0 (libcassandra.2.17.1.dylib:arm64+0x15e848)
+    #18 0x104405478 in datastax::internal::core::Socket::handle_read(long, uv_buf_t const*)+0x178 (libcassandra.2.17.1.dylib:arm64+0x509478)
+    #19 0x104404ca0 in datastax::internal::core::Socket::on_read(uv_stream_s*, long, uv_buf_t const*)+0x6c (libcassandra.2.17.1.dylib:arm64+0x508ca0)
+    #20 0x102f535b0 in uv__stream_io+0x3e8 (libuv.1.dylib:arm64+0x135b0)
+    #21 0x102f5a160 in uv__io_poll+0x57c (libuv.1.dylib:arm64+0x1a160)
+    #22 0x102f4a938 in uv_run+0x10c (libuv.1.dylib:arm64+0xa938)
+    #23 0x1041e2394 in datastax::internal::core::EventLoop::handle_run()+0xa8 (libcassandra.2.17.1.dylib:arm64+0x2e6394)
+    #24 0x1041e0d68 in datastax::internal::core::EventLoop::internal_on_run(void*)+0x1c (libcassandra.2.17.1.dylib:arm64+0x2e4d68)
+    #25 0x188d76030 in _pthread_start+0x84 (libsystem_pthread.dylib:arm64e+0x7030)
+    #26 0x188d70e38 in thread_start+0x4 (libsystem_pthread.dylib:arm64e+0x1e38)
+
+previously allocated by thread T0 here:
+    #0 0x10335f244 in wrap_malloc+0x94 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x53244)
+    #1 0x103f08ae8 in datastax::internal::Memory::malloc(unsigned long)+0x78 (libcassandra.2.17.1.dylib:arm64+0xcae8)
+    #2 0x103f20188 in datastax::internal::Allocated::operator new(unsigned long)+0x14 (libcassandra.2.17.1.dylib:arm64+0x24188)
+    #3 0x104325418 in cass_prepared_bind+0x14 (libcassandra.2.17.1.dylib:arm64+0x429418)
+    #4 0x102aaf62c in main sample.c:115
+    #5 0x1889f50dc  (<unknown module>)
+
+Thread T2 created by T1 here:
+    #0 0x1033581b0 in wrap_pthread_create+0x54 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x4c1b0)
+    #1 0x102f55c28 in uv_thread_create_ex+0xa0 (libuv.1.dylib:arm64+0x15c28)
+    #2 0x102f55b78 in uv_thread_create+0x1c (libuv.1.dylib:arm64+0x15b78)
+    #3 0x1041e0cb8 in datastax::internal::core::EventLoop::run()+0x34 (libcassandra.2.17.1.dylib:arm64+0x2e4cb8)
+    #4 0x1041e28e0 in datastax::internal::core::RoundRobinEventLoopGroup::run()+0xa4 (libcassandra.2.17.1.dylib:arm64+0x2e68e0)
+    #5 0x1043ceb00 in datastax::internal::core::Session::on_connect(datastax::internal::SharedRefPtr<datastax::internal::core::Host> const&, datastax::internal::core::ProtocolVersion, datastax::internal::Map<datastax::internal::core::Address, datastax::internal::SharedRefPtr<datastax::internal::core::Host>, std::__1::less<datastax::internal::core::Address>> const&, datastax::internal::SharedRefPtr<datastax::internal::core::TokenMap> const&, std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>> const&)+0x51c (libcassandra.2.17.1.dylib:arm64+0x4d2b00)
+    #6 0x1043e79c0 in datastax::internal::core::SessionBase::on_initialize(datastax::internal::core::ClusterConnector*)+0x700 (libcassandra.2.17.1.dylib:arm64+0x4eb9c0)
+    #7 0x1043fd3c0 in datastax::internal::Callback<void, datastax::internal::core::ClusterConnector*>::MemberInvoker<void (datastax::internal::core::SessionBase::*)(datastax::internal::core::ClusterConnector*), datastax::internal::core::SessionBase>::invoke(datastax::internal::core::ClusterConnector* const&) const+0x160 (libcassandra.2.17.1.dylib:arm64+0x5013c0)
+    #8 0x10402d254 in datastax::internal::Callback<void, datastax::internal::core::ClusterConnector*>::operator()(datastax::internal::core::ClusterConnector* const&) const+0xdc (libcassandra.2.17.1.dylib:arm64+0x131254)
+    #9 0x10402d058 in datastax::internal::core::ClusterConnector::finish()+0x168 (libcassandra.2.17.1.dylib:arm64+0x131058)
+    #10 0x10402d430 in datastax::internal::core::ClusterConnector::maybe_finish()+0xc4 (libcassandra.2.17.1.dylib:arm64+0x131430)
+    #11 0x10402bc2c in datastax::internal::core::ClusterConnector::on_connect(datastax::internal::core::ControlConnector*)+0x19f0 (libcassandra.2.17.1.dylib:arm64+0x12fc2c)
+    #12 0x104036048 in datastax::internal::Callback<void, datastax::internal::core::ControlConnector*>::MemberInvoker<void (datastax::internal::core::ClusterConnector::*)(datastax::internal::core::ControlConnector*), datastax::internal::core::ClusterConnector>::invoke(datastax::internal::core::ControlConnector* const&) const+0x160 (libcassandra.2.17.1.dylib:arm64+0x13a048)
+    #13 0x104134004 in datastax::internal::Callback<void, datastax::internal::core::ControlConnector*>::operator()(datastax::internal::core::ControlConnector* const&) const+0xdc (libcassandra.2.17.1.dylib:arm64+0x238004)
+    #14 0x104133e0c in datastax::internal::core::ControlConnector::finish()+0x1a0 (libcassandra.2.17.1.dylib:arm64+0x237e0c)
+    #15 0x1041342d8 in datastax::internal::core::ControlConnector::on_success()+0x2c4 (libcassandra.2.17.1.dylib:arm64+0x2382d8)
+    #16 0x1041390d4 in datastax::internal::core::ControlConnector::handle_query_schema(datastax::internal::core::SchemaConnectorRequestCallback*)+0x87c (libcassandra.2.17.1.dylib:arm64+0x23d0d4)
+    #17 0x10413a6fc in datastax::internal::core::SchemaConnectorRequestCallback::on_chain_set()+0x58 (libcassandra.2.17.1.dylib:arm64+0x23e6fc)
+    #18 0x10434e240 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x554 (libcassandra.2.17.1.dylib:arm64+0x452240)
+    #19 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #20 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #21 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #22 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #23 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #24 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #25 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #26 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #27 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #28 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #29 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #30 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #31 0x10434e834 in datastax::internal::core::ChainedRequestCallback::set_chain_responses(datastax::internal::core::ChainedRequestCallback::Map&)+0x2c (libcassandra.2.17.1.dylib:arm64+0x452834)
+    #32 0x10434e1c0 in datastax::internal::core::ChainedRequestCallback::maybe_finish()+0x4d4 (libcassandra.2.17.1.dylib:arm64+0x4521c0)
+    #33 0x10434dc64 in datastax::internal::core::ChainedRequestCallback::on_internal_set(datastax::internal::core::ResponseMessage*)+0x38 (libcassandra.2.17.1.dylib:arm64+0x451c64)
+    #34 0x10434c484 in datastax::internal::core::SimpleRequestCallback::on_set(datastax::internal::core::ResponseMessage*)+0xb8 (libcassandra.2.17.1.dylib:arm64+0x450484)
+    #35 0x10405b3a4 in datastax::internal::core::Connection::on_read(char const*, unsigned long)+0xb40 (libcassandra.2.17.1.dylib:arm64+0x15f3a4)
+    #36 0x10405a848 in datastax::internal::core::ConnectionHandler::on_read(datastax::internal::core::Socket*, long, uv_buf_t const*)+0xb0 (libcassandra.2.17.1.dylib:arm64+0x15e848)
+    #37 0x104405478 in datastax::internal::core::Socket::handle_read(long, uv_buf_t const*)+0x178 (libcassandra.2.17.1.dylib:arm64+0x509478)
+    #38 0x104404ca0 in datastax::internal::core::Socket::on_read(uv_stream_s*, long, uv_buf_t const*)+0x6c (libcassandra.2.17.1.dylib:arm64+0x508ca0)
+    #39 0x102f535b0 in uv__stream_io+0x3e8 (libuv.1.dylib:arm64+0x135b0)
+    #40 0x102f5a160 in uv__io_poll+0x57c (libuv.1.dylib:arm64+0x1a160)
+    #41 0x102f4a938 in uv_run+0x10c (libuv.1.dylib:arm64+0xa938)
+    #42 0x1041e2394 in datastax::internal::core::EventLoop::handle_run()+0xa8 (libcassandra.2.17.1.dylib:arm64+0x2e6394)
+    #43 0x1041e0d68 in datastax::internal::core::EventLoop::internal_on_run(void*)+0x1c (libcassandra.2.17.1.dylib:arm64+0x2e4d68)
+    #44 0x188d76030 in _pthread_start+0x84 (libsystem_pthread.dylib:arm64e+0x7030)
+    #45 0x188d70e38 in thread_start+0x4 (libsystem_pthread.dylib:arm64e+0x1e38)
+
+Thread T1 created by T0 here:
+    #0 0x1033581b0 in wrap_pthread_create+0x54 (libclang_rt.asan_osx_dynamic.dylib:arm64e+0x4c1b0)
+    #1 0x102f55c28 in uv_thread_create_ex+0xa0 (libuv.1.dylib:arm64+0x15c28)
+    #2 0x102f55b78 in uv_thread_create+0x1c (libuv.1.dylib:arm64+0x15b78)
+    #3 0x1041e0cb8 in datastax::internal::core::EventLoop::run()+0x34 (libcassandra.2.17.1.dylib:arm64+0x2e4cb8)
+    #4 0x1043e50fc in datastax::internal::core::SessionBase::connect(datastax::internal::core::Config const&, std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>> const&)+0x740 (libcassandra.2.17.1.dylib:arm64+0x4e90fc)
+    #5 0x1043c7450 in cass_session_connect_keyspace_n+0x1a8 (libcassandra.2.17.1.dylib:arm64+0x4cb450)
+    #6 0x1043c7298 in cass_session_connect_keyspace+0x70 (libcassandra.2.17.1.dylib:arm64+0x4cb298)
+    #7 0x1043c7218 in cass_session_connect+0x24 (libcassandra.2.17.1.dylib:arm64+0x4cb218)
+    #8 0x102aaf010 in connect_session sample.c:19
+    #9 0x102aaf558 in main sample.c:91
+    #10 0x1889f50dc  (<unknown module>)
+
+SUMMARY: AddressSanitizer: heap-use-after-free (libcassandra.2.17.1.dylib:arm64+0x153f0) in std::__1::basic_string<char, std::__1::char_traits<char>, datastax::internal::Allocator<char>>::__is_long[abi:v160006]() const+0x78
+Shadow bytes around the buggy address:
+  0x000107403280: fd fd fd fd fd fd fd fd fd fd fa fa fa fa fa fa
+  0x000107403300: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+  0x000107403380: fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd fd
+  0x000107403400: fd fd fd fd fd fd fd fd fd fd fa fa fa fa fa fa
+  0x000107403480: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+=>0x000107403500: fd fd fd fd fd fd fd fd fd fd fd[fd]fd fd fd fd
+  0x000107403580: fd fd fd fd fd fd fd fd fd fd fd fd fa fa fa fa
+  0x000107403600: fa fa fa fa fa fa fa fa 00 00 00 00 00 00 00 00
+  0x000107403680: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x000107403700: 00 00 00 00 00 00 00 00 00 00 fa fa fa fa fa fa
+  0x000107403780: fa fa fa fa fa fa fa fa fd fd fd fd fd fd fd fd
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==25375==ABORTING
+[1]    25375 abort      ./sample
