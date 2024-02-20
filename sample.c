@@ -48,14 +48,15 @@ CassError execute_query(CassSession* session, const char* query)
     return rc;
 }
 
-CassError insert_value(CassSession* session, CassStatement *statement, const char* key, CassUuid time)
+CassError insert_value(CassSession* session, CassStatement *statement, const char* key, const char* uuid_string)
 {
     CassError rc = CASS_OK;
     CassFuture* future = NULL;
-    const char* query = "INSERT INTO debug.sample (key, time) VALUES (?, ?);";
+    CassUuid uuid;
 
     cass_statement_bind_string_by_name(statement, "key", key);
-    cass_statement_bind_uuid_by_name(statement, "time", time);
+    cass_uuid_from_string(uuid_string, &uuid);
+    cass_statement_bind_uuid_by_name(statement, "uuid", uuid);
 
     future = cass_session_execute(session, statement);
 
@@ -67,7 +68,6 @@ CassError insert_value(CassSession* session, CassStatement *statement, const cha
     }
 
     cass_future_free(future);
-    // cass_statement_free(statement);
 
     return rc;
 }
@@ -80,9 +80,7 @@ int main()
     CassFuture *prepared_future;
     const CassPrepared* prepared;
     CassStatement* statement = NULL;
-    CassUuidGen* uuid_gen = cass_uuid_gen_new();
-    CassUuid uuid;
-    const char* query = "INSERT INTO debug.sample (key, time) VALUES (?, ?);";
+    const char* query = "INSERT INTO debug.sample (key, uuid) VALUES (?, ?);";
 
     cluster = cass_cluster_new();
     cass_cluster_set_contact_points(cluster, "127.0.0.1");
@@ -97,8 +95,8 @@ int main()
     execute_query(session, "CREATE KEYSPACE IF NOT EXISTS debug WITH replication = { \
                             'class': 'SimpleStrategy', 'replication_factor': '3' };");
 
-    execute_query(session, "CREATE TABLE IF NOT EXISTS debug.sample (key text, time timeuuid, \
-                                                PRIMARY KEY (key, time));");
+    execute_query(session, "CREATE TABLE IF NOT EXISTS debug.sample (key text, uuid uuid, \
+                                                PRIMARY KEY (key, uuid));");
 
     prepared_future = cass_session_prepare(session, query);
     cass_future_wait(prepared_future);
@@ -116,12 +114,13 @@ int main()
 
     for (int i = 0; i < 1000; i++) {
         fprintf(stderr, "[%d] -------------------------\n", i);
-        cass_uuid_gen_time(uuid_gen, &uuid);
-        insert_value(session, statement, "debug", uuid);
+        insert_value(session, statement, "debug", "8e53eade-55a2-4d37-8831-0ea0e0419a62");
     }
 
-    cass_uuid_gen_free(uuid_gen);
     cass_cluster_free(cluster);
     cass_session_free(session);
+    cass_statement_free(statement);
+    cass_prepared_free(prepared);
+    cass_future_free(prepared_future);
     return 0;
 }
